@@ -1,0 +1,61 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/App.framework
+ios/Pods/
+ios/Podfile.lock
+
+# iOS
+ios/Runner.xcworkspace/
+ios/Pods/
+ios/DerivedData/
+ios/.generated/
+
+# Android
+.android/
+*.iml
+*.hprof
+.gradle/
+local.properties
+*.jar
+*.war
+*.apk
+*.ap_
+*.dex
+*.class
+*.so
+*.swp
+*.swo
+
+# Intellij
+.idea/
+*.ipr
+*.iws
+*.iml
+
+# Visual Studio Code
+.vscode/
+
+# Other files
+pubspec.lock
+pubspec.yaml.deps
+*.log
+*.tmp
+
+# Generated files
+*.DS_Store
+*.log
+
+# Custom files
+*.key
+
+# Sensitive files
+*.jks
+*.keystore
+*.cer
+*.p12
