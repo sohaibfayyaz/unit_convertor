@@ -1,18 +1,10 @@
+import 'package:application_3/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'decimal_text_input_formatter.dart';
+import 'package:units_converter/units_converter.dart';
+
 import 'debouncer.dart';
-
-class LENGTH {
-  final double factor;
-
-  LENGTH(this.factor);
-
-  // Factory constructor for custom units
-  factory LENGTH.custom(double customFactor) {
-    return LENGTH(customFactor);
-  }
-}
+import 'decimal_text_input_formatter.dart';
 
 class UnitConverterScreen extends StatefulWidget {
   @override
@@ -28,14 +20,6 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
   ThemeMode _themeMode = ThemeMode.system;
   List<String> _conversionHistory = [];
 
-  Map<String, LENGTH> lengthMap = {
-    'Millimeters (mm)': LENGTH(0.001),
-    'Centimeters (cm)': LENGTH(0.01),
-    'Meters (m)': LENGTH(1.0),
-    'Kilometers (km)': LENGTH(1000.0),
-    // Add more predefined units as needed
-  };
-
   void _convert() {
     if (_inputValue == 0.0) {
       setState(() {
@@ -44,75 +28,17 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
       return;
     }
 
-    double fromFactor = lengthMap[_fromUnit]?.factor ?? 1.0;
-    double toFactor = lengthMap[_toUnit]?.factor ?? 1.0;
-
-    double convertedValue = (_inputValue * fromFactor) / toFactor;
+    double? convertedValue =
+        _inputValue.convertFromTo(lengthMap[_fromUnit], lengthMap[_toUnit]);
 
     setState(() {
-      _result = convertedValue.toStringAsFixed(2);
+      _result =
+          convertedValue!.toString().replaceAll(RegExp(r'\.?0+$'), '').length >
+                  7
+              ? convertedValue.toStringAsFixed(5)
+              : convertedValue.toString().replaceAll(RegExp(r'\.?0+$'), '');
       _conversionHistory.add('$_inputValue $_fromUnit = $_result $_toUnit');
     });
-  }
-
-  void _showCustomUnitDialog() {
-    String customUnitName = '';
-    double customUnitFactor = 1.0;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Add Custom Unit'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  decoration: InputDecoration(labelText: 'Unit Name'),
-                  onChanged: (value) {
-                    customUnitName = value;
-                  },
-                ),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Conversion Factor'),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [DecimalTextInputFormatter()],
-                  onChanged: (value) {
-                    if (value.isNotEmpty) {
-                      customUnitFactor = double.tryParse(value) ?? 1.0;
-                    } else {
-                      customUnitFactor = 1.0; // Reset to default if empty
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                if (customUnitName.isNotEmpty) {
-                  setState(() {
-                    lengthMap[customUnitName] = LENGTH.custom(customUnitFactor);
-                  });
-                  Navigator.of(context).pop();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Unit name cannot be empty')),
-                  );
-                }
-              },
-              child: Text('Add'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _showHistoryDialog() {
@@ -154,14 +80,14 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
               onPressed: () => _showHistoryDialog(),
             ),
             IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () => _showCustomUnitDialog(),
-            ),
-            IconButton(
-              icon: Icon(_themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
+              icon: Icon(_themeMode == ThemeMode.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode),
               onPressed: () {
                 setState(() {
-                  _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+                  _themeMode = _themeMode == ThemeMode.dark
+                      ? ThemeMode.light
+                      : ThemeMode.dark;
                 });
               },
             ),
@@ -173,12 +99,16 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextField(
-                decoration: InputDecoration(labelText: 'Input Value', border: OutlineInputBorder()),
+                decoration: InputDecoration(
+                    labelText: 'Input Value', border: OutlineInputBorder()),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [DecimalTextInputFormatter()],
                 onChanged: (value) {
-                  _inputValue = value.isNotEmpty ? double.tryParse(value) ?? 0.0 : 0.0;
-                  _convert();
+                  _inputValue =
+                      value.isNotEmpty ? double.tryParse(value) ?? 0.0 : 0.0;
+                  _debouncer.run(() {
+                    _convert();
+                  });
                 },
               ),
               SizedBox(height: 16),
@@ -190,7 +120,8 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                   });
                   _convert();
                 },
-                items: lengthMap.keys.map<DropdownMenuItem<String>>((String key) {
+                items:
+                    lengthMap.keys.map<DropdownMenuItem<String>>((String key) {
                   return DropdownMenuItem<String>(
                     value: key,
                     child: Text(key),
@@ -206,7 +137,8 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                   });
                   _convert();
                 },
-                items: lengthMap.keys.map<DropdownMenuItem<String>>((String key) {
+                items:
+                    lengthMap.keys.map<DropdownMenuItem<String>>((String key) {
                   return DropdownMenuItem<String>(
                     value: key,
                     child: Text(key),
