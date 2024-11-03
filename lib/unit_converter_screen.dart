@@ -13,7 +13,7 @@ class UnitConverterScreen extends StatefulWidget {
 
 class _UnitConverterScreenState extends State<UnitConverterScreen> {
   Debouncer _debouncer = Debouncer(delay: Duration(milliseconds: 500));
-  
+
   double _inputValue = 0.0;
   String _fromUnit = 'Millimeters (mm)';
   String _toUnit = 'Centimeters (cm)';
@@ -30,16 +30,23 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
     }
 
     double? convertedValue =
-        _inputValue.convertFromTo(lengthMap[_fromUnit], lengthMap[_toUnit]);
+    _inputValue.convertFromTo(lengthMap[_fromUnit], lengthMap[_toUnit]);
 
     setState(() {
       _result =
-          convertedValue!.toString().replaceAll(RegExp(r'\.?0+$'), '').length >
-                  7
-              ? convertedValue.toStringAsFixed(5)
-              : convertedValue.toString().replaceAll(RegExp(r'\.?0+$'), '');
+      convertedValue!.toString().replaceAll(RegExp(r'\.?0+$'), '').length >
+          7
+          ? convertedValue.toStringAsFixed(5)
+          : convertedValue.toString().replaceAll(RegExp(r'\.?0+$'), '');
       _conversionHistory.add('$_inputValue $_fromUnit = $_result $_toUnit');
     });
+  }
+
+  void _clearHistory() {
+    setState(() {
+      _conversionHistory.clear(); // Clear the history
+    });
+    Navigator.of(context).pop(); // Close the dialog
   }
 
   void _showHistoryDialog() {
@@ -56,6 +63,10 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
             ),
           ),
           actions: [
+            TextButton(
+              onPressed: () => _clearHistory(), // Clear history button
+              child: Text('Clear History'),
+            ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text('Close'),
@@ -106,7 +117,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                 inputFormatters: [DecimalTextInputFormatter()],
                 onChanged: (value) {
                   _inputValue =
-                      value.isNotEmpty ? double.tryParse(value) ?? 0.0 : 0.0;
+                  value.isNotEmpty ? double.tryParse(value) ?? 0.0 : 0.0;
                   _debouncer.run(() {
                     _convert();
                   });
@@ -122,7 +133,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                   _convert();
                 },
                 items:
-                    lengthMap.keys.map<DropdownMenuItem<String>>((String key) {
+                lengthMap.keys.map<DropdownMenuItem<String>>((String key) {
                   return DropdownMenuItem<String>(
                     value: key,
                     child: Text(key),
@@ -139,7 +150,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                   _convert();
                 },
                 items:
-                    lengthMap.keys.map<DropdownMenuItem<String>>((String key) {
+                lengthMap.keys.map<DropdownMenuItem<String>>((String key) {
                   return DropdownMenuItem<String>(
                     value: key,
                     child: Text(key),
@@ -151,7 +162,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: '$_result $_toUnit'));
                 },
-                child: Text('Copy Result', style: TextStyle(fontSize: 20)),
+                child: Text('Calculate ', style: TextStyle(fontSize: 20)),
               ),
               SizedBox(height: 20),
               Text(
