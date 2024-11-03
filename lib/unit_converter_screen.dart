@@ -13,6 +13,7 @@ class UnitConverterScreen extends StatefulWidget {
 
 class _UnitConverterScreenState extends State<UnitConverterScreen> {
   Debouncer _debouncer = Debouncer(delay: Duration(milliseconds: 500));
+  
   double _inputValue = 0.0;
   String _fromUnit = 'Millimeters (mm)';
   String _toUnit = 'Centimeters (cm)';
