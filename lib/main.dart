@@ -1,8 +1,6 @@
-import 'package:application_3/Debouncer.dart';
 import 'package:application_3/SplashPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:units_converter/units_converter.dart';
 
 void main() => runApp(UnitConverterApp());
 

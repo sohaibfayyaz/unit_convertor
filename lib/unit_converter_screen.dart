@@ -167,7 +167,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
               SizedBox(height: 20),
               Text(
                 'Result: $_result $_toUnit',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ],
