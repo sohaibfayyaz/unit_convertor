@@ -80,6 +80,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       themeMode: _themeMode,
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),

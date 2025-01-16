@@ -26,7 +26,7 @@ class UnitConverterApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Unit Converter',
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
       // Default light theme
       darkTheme: ThemeData.dark(),
